@@ -1,13 +1,107 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  password      String
+  phone         String?
+  address       String?
+  birthDate     DateTime?
+  identityCard  String?
+  poin          Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  items         Item[]
+  shipments     Shipment[]
+  certificates  Certificate[]
+  news          News[]
+}
+
+model Admin {
+  id        Int    @id @default(autoincrement())
+  name      String
+  email     String @unique
+  password  String
+
+  placeId   Int
+  place     Place @relation(fields: [placeId], references: [id])
+
+  shipments Shipment[]
+}
+
+model Place {
+  id             Int    @id @default(autoincrement())
+  name           String
+  address        String
+  managerName    String
+  managerPhone   String
+  operationalJam String
+
+  admins         Admin[]
+}
+
+model Item {
+  id          Int      @id @default(autoincrement())
+  name        String
+  stock       Int
+  category    String
+  weight      Float
+  description String
+  createdAt   DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  shipment Shipment?
+}
+
+model Shipment {
+  id             Int      @id @default(autoincrement())
+  shippingDate   DateTime
+  receivedDate   DateTime?
+  status         String
+  type           String
+  receiverAddress String
+
+  userId  Int
+  user    User @relation(fields: [userId], references: [id])
+
+  itemId  Int @unique
+  item    Item @relation(fields: [itemId], references: [id])
+
+  adminId Int?
+  admin   Admin? @relation(fields: [adminId], references: [id])
+}
+
+model News {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String
+  location    String
+  eventDate   DateTime
+  organizer   String
+
+  isPopup     Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model Certificate {
+  id          Int      @id @default(autoincrement())
+  receivedAt  DateTime
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
 }
