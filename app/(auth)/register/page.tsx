@@ -10,7 +10,15 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: username, email, password }),
+    });
+
+    const data = await res.json();
+    alert(data.message); // tampilkan pesan dari API
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
@@ -73,5 +81,4 @@ export default function RegisterPage() {
       </div>
     </div>
   );
-}
 }
