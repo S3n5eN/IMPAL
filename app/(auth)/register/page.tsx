@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -17,7 +18,7 @@ export default function RegisterPage() {
     });
 
     const data = await res.json();
-    alert(data.message); // tampilkan pesan dari API
+    alert(data.message);
   };
 
   return (
@@ -25,13 +26,17 @@ export default function RegisterPage() {
       {/* Container kiri: form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow-md w-96 flex flex-col gap-4"
+        className="bg-white p-8 rounded shadow-md w-96 flex flex-col gap-4"
       >
-        <h2 className="text-2xl font-bold text-center">Register</h2>
+        <h1 className="text-3xl font-bold text-center text-blue-600">ReuseID</h1>
+        <h2 className="text-xl font-semibold text-center">Buat Akun</h2>
+        <p className="text-sm text-center text-gray-600">
+          Masukkan informasi kamu untuk membuat akun
+        </p>
 
         <input
           type="text"
-          placeholder="Username"
+          placeholder="Name"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="border p-2 rounded"
@@ -69,14 +74,20 @@ export default function RegisterPage() {
             Login
           </a>
         </p>
+
+        <p className="text-xs text-center text-gray-400 mt-4">
+          © 2025 ReuseID. Privacy Policy
+        </p>
       </form>
 
-      {/* Container kanan: gambar */}
+      {/* Container kanan: gambar ilustrasi */}
       <div className="ml-10">
-        <img
-          src="/reuseid.png" // letakkan gambar di folder public/reuseid.png
+        <Image
+          src="/flowchart for loop.png" // letakkan file reuseid.png di folder public/
           alt="ReuseID"
-          className="w-80 rounded shadow-md"
+          width={400}
+          height={300}
+          className="rounded shadow-md"
         />
       </div>
     </div>
