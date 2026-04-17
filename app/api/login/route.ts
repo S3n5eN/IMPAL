@@ -2,35 +2,57 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const jwtsecret = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function POST(req: Request) {
-  const { email, password } = await req.json();
+  try {
+    const { email, password } = await req.json();
 
-  const user = await prisma.user.findUnique({
-    where: { email },
-  });
+    if (!email || !password) {
+      return NextResponse.json(
+        { message: "Data tidak lengkap, silahkan isi data" },
+        { status: 400 },
+      );
+    }
 
-  if (!user) {
-    return NextResponse.json(
-      { error: "User tidak ditemukan" },
-      { status: 404 },
+    const [admin, user] = await Promise.all([
+      prisma.admin.findUnique({ where: { email } }),
+      prisma.user.findUnique({ where: { email } }),
+    ]);
+    
+    const isAdmin = !!admin; // Verifikasi apakah akun ini adalah admin atau user
+    const account = isAdmin ? admin : user;
+
+    if (!account) {
+      return NextResponse.json(
+        { error: "User tidak ditemukan" },
+        { status: 404 },
+      );
+    }
+
+    const isMatch = await bcrypt.compare(password, account.password);
+    if (!isMatch) {
+      return NextResponse.json({ error: "Password salah" }, { status: 401 });
+    }
+    const token = jwt.sign(
+      { id: account.id, name: account.name, role: isAdmin ? "admin" : "user" },
+      JWT_SECRET,
+      { expiresIn: "2h" },
     );
-  }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+    const response = NextResponse.json({ message: "Login berhasil" });
 
-  if (!isMatch) {
-    return NextResponse.json({ error: "Password salah" }, { status: 401 });
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 2 * 60 * 60,
+      path: "/"
+    })
+
+    return response;
+  } catch (error) {
+    console.error("Login error: ", error);
+    return NextResponse.json({message: "Server Error"}, {status: 500});
   }
-  const token = jwt.sign({ userId: user.id }, jwtsecret, { expiresIn: "2h" });
-  return NextResponse.json({
-    message: "Login berhasil",
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    },
-    token,
-  });
 }
