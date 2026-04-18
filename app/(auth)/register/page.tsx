@@ -28,9 +28,18 @@ export default function RegisterPage() {
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded shadow-md w-96 flex flex-col gap-4"
       >
-        <h1 className="text-3xl font-bold text-center text-blue-600">ReuseID</h1>
-        <h2 className="text-xl font-semibold text-center">Buat Akun</h2>
-        <p className="text-sm text-center text-gray-600">
+        {/* Judul utama */}
+        <h1 className="text-4xl font-bold text-center text-teal-400">
+          ReuseID
+        </h1>
+
+        {/* Subjudul */}
+        <h2 className="text-xl font-medium text-center text-black">
+          Buat Akun
+        </h2>
+
+        {/* Deskripsi */}
+        <p className="text-sm text-center text-black">
           Masukkan informasi kamu untuk membuat akun
         </p>
 
@@ -61,9 +70,10 @@ export default function RegisterPage() {
           required
         />
 
+        {/* Tombol Register */}
         <button
           type="submit"
-          className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+          className="bg-teal-300 text-black font-semibold py-2 rounded hover:bg-teal-400 transition"
         >
           Register
         </button>
@@ -83,7 +93,7 @@ export default function RegisterPage() {
       {/* Container kanan: gambar ilustrasi */}
       <div className="ml-10">
         <Image
-          src="/flowchart for loop.png" // letakkan file reuseid.png di folder public/
+          src="/flowchart for loop.png"
           alt="ReuseID"
           width={400}
           height={300}
