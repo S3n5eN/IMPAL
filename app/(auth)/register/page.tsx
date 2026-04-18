@@ -7,9 +7,24 @@ export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validasi email harus @gmail.com
+    if (!email.endsWith("@gmail.com")) {
+      setEmailError("Email harus mengandung @gmail.com");
+      return;
+    }
+
+    // Validasi password: huruf kecil, huruf besar, angka
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+    if (!passwordRegex.test(password)) {
+      setPasswordError("Password harus mengandung huruf kecil, huruf besar, dan angka");
+      return;
+    }
 
     const res = await fetch("/api/register", {
       method: "POST",
@@ -43,37 +58,39 @@ export default function RegisterPage() {
           Masukkan informasi kamu untuk membuat akun
         </p>
 
-        <div className="flex flex-col gap-0">
+      <div className="flex flex-col gap-0">
        <label className="text-black text-medium">Name:</label> 
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="bg-gray-300 text-white p-2 rounded outline-none"
+          className="bg-gray-300 text-black p-2 rounded outline-none"
           required
         />
         </div>
 
-         <div className="flex flex-col gap-0">
+        <div className="flex flex-col gap-0">
         <label className="text-black text-medium">Email:</label> 
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="bg-gray-300 text-white p-2 rounded outline-none"
+          className="bg-gray-300 text-black p-2 rounded outline-none"
           required
         />
+        {emailError && (<p className="text-red-500 text-sm">{emailError}</p>)}
         </div>
 
-         <div className="flex flex-col gap-0">
+        <div className="flex flex-col gap-0">
         <label className="text-black text-medium">Password:</label> 
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="bg-gray-300 text-white p-2 rounded outline-none mb-6"
+          className="bg-gray-300 text-black p-2 rounded outline-none mb-6"
           required
         />
+        {passwordError && (<p className="text-red-500 text-sm">{passwordError}</p>)}
         </div>
 
         {/* Tombol Register */}
