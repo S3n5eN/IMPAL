@@ -1,24 +1,23 @@
 import {admin} from "../../../types/admin";
 
-export class adminMethods{
 
-    verifikasiDataPenerima(){
 
-    }
+export function verifikasiDataPenerima(){
 
-    kelolaLokasi(){
+}
 
-    }
+export function kelolaLokasi(){
 
-    kelolaKegiatan(){
+}
 
-    }
+export function kelolaKegiatan(){
 
-    lacakLokasiPengiriman(){
+}
 
-    }
+export function lacakLokasiPengiriman(){
 
-    kirimSertifikat(){
-        
-    }
+}
+
+export function kirimSertifikat(){
+
 }

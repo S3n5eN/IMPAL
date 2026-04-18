@@ -1,9 +1,8 @@
 import {sertifikat} from "../../../types/sertifikat";
 
 
-export class sertifikatMethods{
 
-    kirimSertifikat(id:sertifikat, tanggalTerbit:sertifikat){
 
-    }
+export function kirimSertifikat(id:sertifikat, tanggalTerbit:sertifikat){
+
 }

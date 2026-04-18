@@ -1,8 +1,7 @@
 import {kontakDonatur} from "../../../types/kontakDonatur";
 
-export class kontakDonaturMethods{
 
-    pesanTunggu(){
-        
+
+export function pesanTunggu(){
+
     }
-}
