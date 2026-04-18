@@ -22,19 +22,19 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+    <div className="flex min-h-screen items-center justify-center bg-white">
       {/* Container kiri: form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow-md w-96 flex flex-col gap-4"
+        className="bg-white p-8 rounded  w-100 max-w-4xl flex flex-col gap-4"
       >
         {/* Judul utama */}
-        <h1 className="text-4xl font-bold text-center text-teal-400">
+        <h1 className="text-4xl font-bold text-center text-[#007582]">
           ReuseID
         </h1>
 
         {/* Subjudul */}
-        <h2 className="text-xl font-medium text-center text-black">
+        <h2 className="text-xl font-bold text-center text-black">
           Buat Akun
         </h2>
 
@@ -43,37 +43,43 @@ export default function RegisterPage() {
           Masukkan informasi kamu untuk membuat akun
         </p>
 
+        <div className="flex flex-col gap-0">
+       <label className="text-black text-medium">Name:</label> 
         <input
           type="text"
-          placeholder="Name"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="border p-2 rounded"
+          className="bg-gray-300 text-white p-2 rounded outline-none"
           required
         />
+        </div>
 
+         <div className="flex flex-col gap-0">
+        <label className="text-black text-medium">Email:</label> 
         <input
           type="email"
-          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 rounded"
+          className="bg-gray-300 text-white p-2 rounded outline-none"
           required
         />
+        </div>
 
+         <div className="flex flex-col gap-0">
+        <label className="text-black text-medium">Password:</label> 
         <input
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 rounded"
+          className="bg-gray-300 text-white p-2 rounded outline-none mb-6"
           required
         />
+        </div>
 
         {/* Tombol Register */}
         <button
           type="submit"
-          className="bg-teal-300 text-black font-semibold py-2 rounded hover:bg-teal-400 transition"
+          className="bg-[#007582] text-white font-semibold py-2 rounded transition"
         >
           Register
         </button>
@@ -93,7 +99,7 @@ export default function RegisterPage() {
       {/* Container kanan: gambar ilustrasi */}
       <div className="ml-10">
         <Image
-          src="/flowchart for loop.png"
+          src="/reuse_id.jpeg"
           alt="ReuseID"
           width={400}
           height={300}
