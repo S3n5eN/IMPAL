@@ -9,14 +9,20 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    
 
     // Validasi email harus @gmail.com
     if (!email.endsWith("@gmail.com")) {
       setEmailError("Email harus mengandung @gmail.com");
       return;
+    }else{
+      setEmailError("");
     }
 
     // Validasi password: huruf kecil, huruf besar, angka
@@ -24,6 +30,8 @@ export default function RegisterPage() {
     if (!passwordRegex.test(password)) {
       setPasswordError("Password harus mengandung huruf kecil, huruf besar, dan angka");
       return;
+    }else{
+      setPasswordError("");
     }
 
     const res = await fetch("/api/register", {
@@ -74,29 +82,51 @@ export default function RegisterPage() {
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {setEmail(e.target.value)
+            setEmail(e.target.value);
+            if(e.target.value.endsWith("@gmail.com")){
+              setEmailError("");
+            }
+          }
+          }
           className="bg-gray-300 text-black p-2 rounded outline-none"
           required
         />
         {emailError && (<p className="text-red-500 text-sm">{emailError}</p>)}
         </div>
 
-        <div className="flex flex-col gap-0">
-        <label className="text-black text-medium">Password:</label> 
+       <div className="flex flex-col gap-2">
+         <label className="text-black text-medium">Password:</label>
+        <div className="relative">
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="bg-gray-300 text-black p-2 rounded outline-none mb-6"
-          required
-        />
-        {passwordError && (<p className="text-red-500 text-sm">{passwordError}</p>)}
-        </div>
+          onChange={(e) => {
+            setPassword(e.target.value);
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+         if (passwordRegex.test(e.target.value)) {
+            setPasswordError("");
+        }
+      }}
+        className="bg-gray-300 text-black p-2 rounded outline-none w-full"
+        required
+     />
+     <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 top-2 text-gray-600 hover:text-black cursor-pointer"
+    >
+      {showPassword ? "🙈" : "👁️"}
+    </button>
+  </div>
+  {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
+</div>
+
 
         {/* Tombol Register */}
         <button
           type="submit"
-          className="bg-[#007582] text-white font-semibold py-2 rounded transition"
+          className="bg-[#007582] text-white font-semibold py-2 rounded transition cursor-pointer"
         >
           Register
         </button>
