@@ -5,7 +5,7 @@ export default function Home() {
   const [user, setuser] = useState<string>("");
   const handleGetUser = async () => {
     try {
-      const  res = await fetch("/api/user");
+      const  res = await fetch("/api/Pengguna");
       if (res.ok) {
         const data = await res.json();
         setuser(data.name);

@@ -7,11 +7,10 @@ interface JwtPayload {
     name: string;
 }
 
+// ==== Ini buat dapetin id, dan nama user yang login ====
 export async function GET(req: NextRequest) {
     const token = req.cookies.get("token")?.value;
 
-
-    
     if (!token) {
         return NextResponse.json({ message: "Belum login" }, { status: 401 });
     }
@@ -19,9 +18,7 @@ export async function GET(req: NextRequest) {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
 
-        console.log("Decoded User:", decoded); // Cek apakah muncul di terminal
-
-        return NextResponse.json({ id: decoded.id, role: decoded.role, name: decoded.name });
+        return NextResponse.json({ id: decoded.id, name: decoded.name });
     } catch  {
         return NextResponse.json({ message: "Token tidak valid" }, { status: 401 });
     }

@@ -5,9 +5,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // Route yang boleh diakses
 const Protected_routes: Record<string, string[]> = {
-  "/dashboard/admin": ["admin"],
-  "/dashboard/user": ["user"],
+  "/admin/dashboard": ["admin"],
   "/api/admin": ["admin"],
+  "/dashboard": ["user"],
+  "/api/user": ["user"],
 };
 
 interface JwtPayload {
@@ -41,7 +42,8 @@ export function proxy(req: NextRequest) {
     const allowedRoles = Protected_routes[matchedRoute];
 
     if (!allowedRoles.includes(decoded.role)) {
-      return NextResponse.redirect(new URL("/", req.url));
+      const redirectTo = decoded.role === "admin" ? "/admin/dashboard" : "/dashboard";
+      return NextResponse.redirect(new URL(redirectTo, req.url));
     }
 
     const requestHeaders = new Headers(req.headers);

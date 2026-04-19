@@ -1,14 +1,16 @@
 import { prisma } from "@/lib/prisma";
+import { pengguna } from "@/types/pengguna";
 import { NextResponse } from "next/server";
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// ==== Ini Method Login Pengguna & Admin ====
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const body: Pick<pengguna, "email" | "password"> = await req.json();
 
-    if (!email || !password) {
+    if (!body.email || !body.password) {
       return NextResponse.json(
         { message: "Data tidak lengkap, silahkan isi data" },
         { status: 400 },
@@ -16,8 +18,8 @@ export async function POST(req: Request) {
     }
 
     const [admin, user] = await Promise.all([
-      prisma.admin.findUnique({ where: { email } }),
-      prisma.user.findUnique({ where: { email } }),
+      prisma.admin.findUnique({ where: { email: body.email } }),
+      prisma.user.findUnique({ where: { email: body.email } }),
     ]);
     
     const isAdmin = !!admin; // Verifikasi apakah akun ini adalah admin atau user
@@ -30,7 +32,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const isMatch = await bcrypt.compare(password, account.password);
+    const isMatch = await bcrypt.compare(body.password, account.password);
     if (!isMatch) {
       return NextResponse.json({ error: "Password salah" }, { status: 401 });
     }
@@ -40,7 +42,7 @@ export async function POST(req: Request) {
       { expiresIn: "2h" },
     );
 
-    const response = NextResponse.json({ message: "Login berhasil" });
+    const response = NextResponse.json({ message: "Login berhasil", role: isAdmin ? "admin" : "user" });
 
     response.cookies.set("token", token, {
       httpOnly: true,
