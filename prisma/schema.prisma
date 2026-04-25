@@ -7,81 +7,144 @@ datasource db {
   provider = "mysql"
 }
 
-model User {
-  id            Int      @id @default(autoincrement())
-  name          String
-  email         String   @unique
-  password      String
-  phone         String?
-  address       String?
-  birthDate     DateTime?
-  identityCard  String?
-  poin          Int      @default(0)
-  createdAt     DateTime @default(now())
-
-  items         Item[]
-  shipments     Shipment[]
-  certificates  Certificate[]
-  news          News[]
+enum ItemStatus {
+  PendingApproval
+  Tersedia
+  Diambil
+  Ditolak
 }
 
-model Admin {
-  id        Int    @id @default(autoincrement())
-  name      String
-  email     String @unique
-  password  String
-
-  placeId   Int
-  place     Place @relation(fields: [placeId], references: [id])
-
-  shipments Shipment[]
+enum Gender {
+  Pria
+  Wanita
 }
 
-model Place {
-  id             Int    @id @default(autoincrement())
+enum ItemQuality {
+  SangatBaik
+  Baik
+  CukupBaik
+  Layak
+  CukupLayak
+}
+
+enum ShipmentStatus {
+  Pending
+  Approved
+  Rejected
+  Delivered
+}
+
+model user {
+  id          Int           @id @default(autoincrement())
+  name        String
+  email       String        @unique(map: "User_email_key")
+  password    String
+  poin        Int           @default(0)
+  createdAt   DateTime      @default(now())
+  profile     userProfile?
+  certificate certificate[]
+  item        item[]
+  news        news[]
+  shipment    shipment[]
+}
+
+model userProfile {
+  id           Int       @id @default(autoincrement())
+  userId       Int       @unique
+  namaLengkap  String
+  phone        String
+  pekerjaan    String
+  address      String
+  usia         Int
+  gender       Gender
+  identityId   String
+  isVerified   Boolean   @default(false)
+  verifiedAt   DateTime?
+  verifiedBy   Int?
+  user         user      @relation(fields: [userId], references: [id], map: "UserProfile_userId_fkey")
+  shipment     shipment[]
+
+  @@index([userId], map: "UserProfile_userId_fkey")
+}
+
+model admin {
+  id       Int        @id @default(autoincrement())
+  name     String
+  email    String     @unique(map: "Admin_email_key")
+  password String
+  placeId  Int
+  place    place      @relation(fields: [placeId], references: [id], map: "Admin_placeId_fkey")
+  shipment shipment[]
+
+  @@index([placeId], map: "Admin_placeId_fkey")
+}
+
+model place {
+  id             Int     @id @default(autoincrement())
   name           String
   address        String
   managerName    String
   managerPhone   String
   operationalJam String
-
-  admins         Admin[]
+  admin          admin[]
+  item           item[]
 }
 
-model Item {
-  id          Int      @id @default(autoincrement())
+model item {
+  id          Int          @id @default(autoincrement())
   name        String
-  stock       Int
   category    String
-  weight      Float
   description String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime     @default(now())
+  userId      Int
+  placeId     Int
+  imageURL    String
+  status      ItemStatus   @default(PendingApproval)
+  quality     ItemQuality?
+  user        user         @relation(fields: [userId], references: [id], map: "Item_userId_fkey")
+  place       place        @relation(fields: [placeId], references: [id], map: "Item_placeId_fkey")
+  shipment    shipment[]
 
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
-
-  shipment Shipment?
+  @@index([userId], map: "Item_userId_fkey")
+  @@index([placeId], map: "Item_placeId_fkey")
 }
 
-model Shipment {
-  id             Int      @id @default(autoincrement())
-  shippingDate   DateTime
-  receivedDate   DateTime?
-  status         String
-  type           String
-  receiverAddress String
+model shipment {
+  id              Int            @id @default(autoincrement())
+  itemId          Int
+  userId          Int
+  adminId         Int?
+  userProfileId   Int?
+  type            String         // "donation" atau "claim"
+  claimType       String?        // "pickup" atau "delivery"
+  receivedAt      DateTime?
+  receiverAddress String?
+  isAutoApproved  Boolean        @default(false)
+  status          ShipmentStatus @default(Pending)
+  createdAt       DateTime       @default(now())
+  deliveredDate   DateTime?
 
-  userId  Int
-  user    User @relation(fields: [userId], references: [id])
+  item            item           @relation(fields: [itemId], references: [id], map: "Shipment_itemId_fkey")
+  user            user           @relation(fields: [userId], references: [id], map: "Shipment_userId_fkey")
+  admin           admin?         @relation(fields: [adminId], references: [id], map: "Shipment_adminId_fkey")
+  userProfile     userProfile?   @relation(fields: [userProfileId], references: [id], map: "Shipment_userProfileId_fkey")
 
-  itemId  Int @unique
-  item    Item @relation(fields: [itemId], references: [id])
-
-  adminId Int?
-  admin   Admin? @relation(fields: [adminId], references: [id])
+  @@unique([itemId, type])
+  @@index([userId], map: "Shipment_userId_fkey_new")      
+  @@index([adminId], map: "Shipment_adminId_fkey_new")    
+  @@index([userProfileId], map: "Shipment_userProfileId_fkey_new") 
 }
 
-model News {
+model certificate {
+  id         Int      @id @default(autoincrement())
+  receivedAt DateTime
+  userId     Int
+  user       user     @relation(fields: [userId], references: [id], map: "Certificate_userId_fkey")
+
+  @@index([userId], map: "Certificate_userId_fkey")
+}
+
+model news {
   id          Int      @id @default(autoincrement())
   title       String
   description String
@@ -89,19 +152,11 @@ model News {
   location    String
   eventDate   DateTime
   organizer   String
-
   isPopup     Boolean  @default(false)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
+  userId      Int
+  user        user     @relation(fields: [userId], references: [id], map: "News_userId_fkey")
 
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
-}
-
-model Certificate {
-  id          Int      @id @default(autoincrement())
-  receivedAt  DateTime
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  @@index([userId], map: "News_userId_fkey")
 }

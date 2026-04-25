@@ -1,3 +1,5 @@
+import { Gender } from "@/generated/prisma";
+
 export interface pengguna {
     id: number;
     name: string;
@@ -9,7 +11,9 @@ export interface pengguna {
         usia: number;
         nomorTelpon: string;
         alamat: string;
-        gender: string;
+        gender: Gender;
         pekerjaan: string;
+        // === Baru nih karena di database minta NIK ====
+        NIK: string;
     }
 }

@@ -25,7 +25,7 @@ export async function POST(req: Request) {
         const res = await prisma.user.create({
             data: {name: body.name, email: body.email, password: hashPassword}
         })
-        return NextResponse.json({message: "User berhasil registrasi", user: res}, {status: 200})
+        return NextResponse.json({message: "User berhasil registrasi"}, {status: 200})
     } catch {
         return NextResponse.json({message: "Server Error"}, {status: 500})
     }

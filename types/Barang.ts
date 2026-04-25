@@ -4,4 +4,7 @@ export interface Barang{
     desc:string;
     foto:string;
     status:boolean;
+    // === Ini baru, karena di datebase minta kategory ====
+    category: string
+    placeId: string;
 }

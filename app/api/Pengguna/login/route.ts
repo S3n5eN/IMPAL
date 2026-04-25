@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       { expiresIn: "2h" },
     );
 
-    const response = NextResponse.json({ message: "Login berhasil", role: isAdmin ? "admin" : "user" });
+    const response = NextResponse.json({ message: "Login berhasil", role: isAdmin ? "admin" : "user", token });
 
     response.cookies.set("token", token, {
       httpOnly: true,
