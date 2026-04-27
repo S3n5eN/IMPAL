@@ -1,7 +1,7 @@
 export default function DashboardPage() {
   const items = [
     {
-      name: "Susu MBG",
+      name: "SUSU MBG",
       lokasi: "Bandung",
       img: "https://minhajshahabah.id/wp-content/uploads/2026/01/Susu-Program-MBG-Susu-UHT-Rekombinasi-Cek-BPOM-Halal-Fakta-Gizi-2026.jpg",
     },
