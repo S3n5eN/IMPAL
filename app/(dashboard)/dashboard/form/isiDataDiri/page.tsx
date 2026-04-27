@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function FormDataDiri() {
@@ -20,7 +21,7 @@ export default function FormDataDiri() {
   const inputClass = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-8">
+    <div className=" flex items-center justify-center bg-gray-50 p-10">
       <div className="relative bg-white w-full p-10 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
         {/* Background blobs */}
@@ -54,8 +55,8 @@ export default function FormDataDiri() {
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Gender</label>
               <select name="gender" onChange={handleChange} className={inputClass}>
                 <option value="">Pilih</option>
-                <option value="MALE">Laki-laki</option>
-                <option value="FEMALE">Perempuan</option>
+                <option value="MALE">Pria</option>
+                <option value="FEMALE">Wanita</option>
               </select>
             </div>
 
@@ -93,10 +94,10 @@ export default function FormDataDiri() {
 
           {/* Buttons */}
           <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
-            <button type="button" className="px-6 py-2 bg-gray-100 rounded-full text-sm text-gray-600 hover:bg-gray-200 transition">
-              Kembali
+            <button type="button" className="px-6 py-2 bg-white rounded-sm text-sm text-gray-600 hover:bg-gray-200 transition">
+              <Link href="/dashboard">Kembali</Link>
             </button>
-            <button type="submit" className="px-8 py-2 bg-teal-500 text-white rounded-full text-sm font-medium hover:bg-teal-600 transition">
+            <button type="submit" className="px-8 py-2 bg-teal-500 text-white rounded-sm text-sm font-medium hover:bg-teal-600 transition">
               Ambil
             </button>
           </div>

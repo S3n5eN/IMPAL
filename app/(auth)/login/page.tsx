@@ -85,6 +85,7 @@ export default function LoginPage() {
           alt="Login Background"
           fill
           quality={100}
+          sizes="100vh"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-[#007582]/40" />

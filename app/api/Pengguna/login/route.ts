@@ -2,8 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { pengguna } from "@/types/pengguna";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env.JWT_SECRET;
+import { SignJWT } from "jose";
+
+// ==== karena sekarang pake jose, pake perlu encoder karena jose butuh format Uint8Array untuk secret key ====
+const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 // ==== Ini Method Login Pengguna & Admin ====
 export async function POST(req: Request) {
@@ -36,11 +38,12 @@ export async function POST(req: Request) {
     if (!isMatch) {
       return NextResponse.json({ error: "Password salah" }, { status: 401 });
     }
-    const token = jwt.sign(
-      { id: account.id, name: account.name, role: isAdmin ? "admin" : "user" },
-      JWT_SECRET,
-      { expiresIn: "2h" },
-    );
+    // ==== Kita ganti dengan jose ====
+    const token = await new SignJWT({ id: account.id, role: isAdmin ? "admin" : "user", name: account.name })
+      .setProtectedHeader({ alg: "HS256"})
+      .setIssuedAt()
+      .setExpirationTime("1h") // sengaja biar kita bisa cek apakah token bisa expited atau enggak
+      .sign(secret);
 
     const response = NextResponse.json({ message: "Login berhasil", role: isAdmin ? "admin" : "user", token });
 

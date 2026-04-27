@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-const jwt =  require("jsonwebtoken");
+import { jwtVerify } from "jose";
 
 interface JwtPayload {
     id: number;
@@ -16,9 +16,10 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        const { payload } = await jwtVerify(token, secret) as { payload: JwtPayload };
 
-        return NextResponse.json({ id: decoded.id, name: decoded.name });
+        return NextResponse.json({ id: payload.id, name: payload.name });
     } catch  {
         return NextResponse.json({ message: "Token tidak valid" }, { status: 401 });
     }
