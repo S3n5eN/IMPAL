@@ -27,8 +27,8 @@ export default function RegisterPage() {
 
     // Validasi password: huruf kecil, huruf besar, angka
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
-    if (!passwordRegex.test(password)) {
-      setPasswordError("Password harus mengandung huruf kecil, huruf besar, dan angka");
+    if (password.length <8 || !passwordRegex.test(password)) {
+      setPasswordError("Password harus minimal 8 karakter dan harus mengandung huruf kecil, huruf besar, dan angka");
       return;
     }else{
       setPasswordError("");
@@ -82,9 +82,10 @@ export default function RegisterPage() {
         <input
           type="email"
           value={email}
-          onChange={(e) => {setEmail(e.target.value)
-            setEmail(e.target.value);
-            if(e.target.value.endsWith("@gmail.com")){
+          onChange={(e) => {setEmail(e.target.value);
+            if(!e.target.value.endsWith("@gmail.com")){
+              setEmailError("Email harus mengandung @gmail.com");
+            }else{
               setEmailError("");
             }
           }
@@ -104,7 +105,7 @@ export default function RegisterPage() {
           onChange={(e) => {
             setPassword(e.target.value);
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
-         if (passwordRegex.test(e.target.value)) {
+         if (e.target.value.length >= 8 && passwordRegex.test(e.target.value)) {
             setPasswordError("");
         }
       }}
