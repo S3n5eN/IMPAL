@@ -29,7 +29,7 @@ async function isiDataDiri(req: NextRequest, decoded: { id: string }) {
 
     // ==== pakai upsert biar kalau udah diupdate, kalau belum ada maka ada ====
     await prisma.userProfile.upsert({
-      where: { id: Number(decoded.id) },
+      where: { userId: Number(decoded.id) },
       update: {
         namaLengkap: body.dataDiri.namaLengkap,
         usia: body.dataDiri.usia,

@@ -45,6 +45,13 @@ async function simpanBarang(req: NextRequest, decoded: { id: string}){
             }
         });
 
+        const userProfile = await prisma.userProfile.findFirst({
+            where: { userId: Number(decoded.id)}
+        })
+
+        if (!userProfile) {
+            return NextResponse.json({message: "Lengkapi data diri Anda terlebih dahulu"}, { status: 404})
+        }
         // ==== Setelah barang tersimpan, buat shipment ====
         await prisma.shipment.create({
             data: {
