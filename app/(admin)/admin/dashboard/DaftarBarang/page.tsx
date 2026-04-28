@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 type Shipment = {
@@ -64,7 +65,7 @@ export default function VerifikasiBarangPage() {
         {shipments.map((s) => (
           <div key={s.id} className="flex border rounded-lg p-4 shadow-sm bg-white">
             {/* Gambar barang */}
-            <img
+            <Image
               src={s.item.imageURL}
               alt={s.item.name}
               className="w-24 h-24 object-cover rounded-md mr-4"
