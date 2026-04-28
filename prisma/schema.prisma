@@ -54,7 +54,7 @@ model userProfile {
   userId       Int       @unique
   namaLengkap  String
   phone        String
-  pekerjaan    String
+  pekerjaan    String?
   address      String
   usia         Int
   gender       Gender

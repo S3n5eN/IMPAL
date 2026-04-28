@@ -24,16 +24,19 @@ async function isiDataDiri(req: NextRequest, decoded: { id: string }) {
 
     // ==== untuk validasi apakah nama lengkap mengandung angka atau tidak ====
     if (/\d/.test(body.dataDiri.namaLengkap)) {
-      return NextResponse.json({ message: "Nama lengkap tidak boleh mengandung angka" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Nama lengkap tidak boleh mengandung angka" },
+        { status: 400 },
+      );
     }
 
     // ==== pakai upsert biar kalau udah diupdate, kalau belum ada maka ada ====
-    await prisma.userProfile.upsert({
+    const profile = await prisma.userProfile.upsert({
       where: { userId: Number(decoded.id) },
       update: {
         namaLengkap: body.dataDiri.namaLengkap,
         usia: body.dataDiri.usia,
-        phone: body.dataDiri.nomorTelpon, 
+        phone: body.dataDiri.nomorTelpon,
         gender: body.dataDiri.gender as Gender,
         address: body.dataDiri.alamat,
         identityId: body.dataDiri.NIK,
@@ -46,18 +49,37 @@ async function isiDataDiri(req: NextRequest, decoded: { id: string }) {
         gender: body.dataDiri.gender as Gender,
         phone: body.dataDiri.nomorTelpon,
         address: body.dataDiri.alamat,
-        identityId: body.dataDiri.NIK ,
+        identityId: body.dataDiri.NIK,
         pekerjaan: body.dataDiri.pekerjaan ?? undefined,
-      }
-    })
-    return NextResponse.json({message: "Berhasil Update datadiri pengguna"}, {status: 201})
+      },
+    });
+
+    // ==== Update shipment pending yang belum ada userProfileId ====
+    await prisma.shipment.updateMany({
+      where: {
+        userId: Number(decoded.id),
+        type: "claim",
+        status: "Pending",
+        userProfileId: null,
+      },
+      data: {
+        userProfileId: profile.id,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Berhasil Update datadiri pengguna" },
+      { status: 201 },
+    );
   } catch (error) {
     console.log(error);
-    return NextResponse.json({message: "Gagal Update datadiri pengguna"}, {status: 500})
+    return NextResponse.json(
+      { message: "Gagal Update datadiri pengguna" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(req: NextRequest) {
-    return (await protect(isiDataDiri, ["user"]))(req);
+  return (await protect(isiDataDiri, ["user"]))(req);
 }
-

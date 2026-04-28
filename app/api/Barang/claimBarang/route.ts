@@ -13,56 +13,38 @@ async function claimBarang(req: NextRequest, decoded: { id: string }) {
       );
     }
 
-    const isAvailable = await prisma.item.findFirst({
-      where: { id: Number(itemId), status: "Tersedia" },
-    });
-
-    if (!isAvailable) {
-      return NextResponse.json(
-        { message: "Barang tidak ditemukan atau tidak tersedia" },
-        { status: 404 },
-      );
-    }
-
-    const isAlreadyClaimed = await prisma.shipment.findFirst({
-      where: {
-        itemId: Number(itemId),
-        type: "claim",
-        status: { in: ["Pending", "Approved"] },
-      },
-    });
-
-    if (isAlreadyClaimed) {
-      return NextResponse.json(
-        { message: "Barang sudah diklaim oleh pengguna lain" },
-        { status: 400 },
-      );
-    }
-
-    const userVerified = await prisma.userProfile.findFirst({
+    const userProfile = await prisma.userProfile.findFirst({
       where: { userId: Number(decoded.id) },
     });
 
-    if (!userVerified) {
-      return NextResponse.json(
-        { message: "Data pengguna tidak ditemukan" },
-        { status: 404 },
-      );
-    }
+    const isAutoApproved = userProfile?.isVerified ?? false;
+    const userProfileId = userProfile?.id ?? null;
+    let shipment;
 
-    const isAutoApproved = userVerified.isVerified;
+    await prisma.$transaction(async (tx) => {
+      const item = await tx.item.findFirst({
+        where: { id: Number(itemId), status: "Tersedia" },
+      })
 
-    const shipment = await prisma.shipment.create({
-      data: {
-        userId: Number(decoded.id),
-        itemId: Number(itemId),
-        type: "claim",
-        userProfileId: userVerified.id,
-        isAutoApproved,
-        status: isAutoApproved ? "Approved" : "Pending",
-        adminId: null,
-      },
-    });
+      if (!item) throw new Error("Item tidak ditemukan atau tidak tersedia");
+
+      await tx.item.update({
+        where: { id: Number(itemId) },
+        data: { status: "Diambil"}
+      })
+
+      shipment = await tx.shipment.create({
+        data: {
+          userId: Number(decoded.id),
+          itemId: Number(itemId),
+          type: "claim",
+          userProfileId: userProfileId,
+          isAutoApproved,
+          status: isAutoApproved ? "Approved" : "Pending",
+          adminId: null
+        }
+      })
+    }) 
 
     return NextResponse.json(
       {

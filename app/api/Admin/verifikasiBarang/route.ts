@@ -36,7 +36,7 @@ async function verifikasiBarang(req: NextRequest, decoded: { id: string }) {
       );
     }
 
-    if (action === "approve") {
+    if (action === "Approve") {
       if (!quality) {
         return NextResponse.json(
           { message: "Kualitas barang harus diisi saat approve" },
@@ -67,7 +67,7 @@ async function verifikasiBarang(req: NextRequest, decoded: { id: string }) {
       );
     }
 
-    if (action === "reject") {
+    if (action === "Reject") {
       await prisma.shipment.update({
         where: {id: Number(shipmentId)},
         data: {
