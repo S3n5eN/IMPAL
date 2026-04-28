@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-
+import {FaEye, FaEyeSlash} from "react-icons/fa";
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -117,7 +117,7 @@ export default function RegisterPage() {
       onClick={() => setShowPassword(!showPassword)}
       className="absolute right-3 top-2 text-gray-600 hover:text-black cursor-pointer"
     >
-      {showPassword ? "🙈" : "👁️"}
+      {showPassword ? <FaEyeSlash />:<FaEye/>}
     </button>
   </div>
   {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
