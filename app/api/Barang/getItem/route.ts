@@ -1,32 +1,23 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { protect } from "@/lib/protect";
+import { NextRequest } from "next/server";
 
-export async function GET(req: Request) {
+async function getItem(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("userId");
+    const items = await prisma.item.findMany();
 
-    if (!userId) {
-      return Response.json(
-        { message: "userId wajib diisi" },
-        { status: 400 }
-      );
-    }
-
-    const items = await prisma.item.findMany({
-      where: {
-        userId: Number(userId) // 🔥 FIX DI SINI
-      }
-    });
-
-    return Response.json(items);
+    return NextResponse.json(items);
 
   } catch (error) {
-    console.error(error); // 🔥 WAJIB
-    return Response.json(
+    console.error(error);
+    return NextResponse.json(
       { message: "Server Error" },
       { status: 500 }
     );
   }
-  console.log("userId:", userId);
+}
+
+export async function GET(req: NextRequest) {
+  return (await protect(getItem, ["user"]))(req); 
 }
