@@ -58,7 +58,7 @@ export default function DashboardPage() {
           <a href="#" className="hover:text-teal-600 transition-colors">Penyaluran</a>
           <a href="#" className="hover:text-teal-600 transition-colors">Tentang Kami</a>
           <button className="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700 transition-colors">
-            Donasi
+            <Link href="dashboard/form/tambahBarang">Donasi</Link>
           </button>
         </nav>
 
